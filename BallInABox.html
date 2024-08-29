@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ball in a Box</title>
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            overflow: hidden;
+        }
+        #ball {
+            width: 50px;
+            height: 50px;
+            background-color: red;
+            border-radius: 50%;
+            position: absolute;
+        }
+    </style>
+</head>
+<body>
+    <div id="ball"></div>
+    <script>
+        const ball = document.getElementById('ball');
+        let lastScreenX = window.screenX;
+        let lastScreenY = window.screenY;
+        let x = window.innerWidth / 2 - 25;
+        let y = window.innerHeight - 50;
+        let velocityX = 0;
+        let velocityY = 0;
+        const friction = 0.98;
+        const gravity = 0.5;
+        const restitution = 0.2;
+        const xSensitivity = 0.25; // X-axis sensitivity factor
+        const ySensitivity = 0.25; // Y-axis sensitivity factor
+
+        function updateBallPosition() {
+            const deltaX = window.screenX - lastScreenX;
+            const deltaY = window.screenY - lastScreenY;
+            
+            velocityX += deltaX * xSensitivity; // Apply x-axis sensitivity
+            velocityY += deltaY * ySensitivity; // Apply y-axis sensitivity
+            
+            velocityX *= friction;
+            velocityY *= friction;
+            velocityY += gravity;
+            x += velocityX;
+            y += velocityY;
+            
+            // Boundary check and collision response
+            if (x < 0) {
+                x = 0;
+                velocityX = -velocityX * restitution;
+            } else if (x + ball.offsetWidth > window.innerWidth) {
+                x = window.innerWidth - ball.offsetWidth;
+                velocityX = -velocityX * restitution;
+            }
+            if (y < 0) {
+                y = 0;
+                velocityY = -velocityY * restitution;
+            } else if (y + ball.offsetHeight > window.innerHeight) {
+                y = window.innerHeight - ball.offsetHeight;
+                velocityY = -velocityY * restitution;
+            }
+            ball.style.left = x + 'px';
+            ball.style.top = y + 'px';
+            lastScreenX = window.screenX;
+            lastScreenY = window.screenY;
+            requestAnimationFrame(updateBallPosition);
+        }
+        updateBallPosition();
+    </script>
+</body>
+</html>
